@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const LOCAL_STORAGE_KEY = 'todoApp.todos'
 
-function App() {
+const App = () => {
   const [todos, setTodos] = useState([]);
   const toDoName = useRef();
 
@@ -17,7 +17,7 @@ function App() {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos))
   }, [todos])
 
-  function handleAdd(e) {
+  const handleAdd = (e) => {
     const name = toDoName.current.value;
     if(name === "") return
     setTodos(previous => {
@@ -26,13 +26,24 @@ function App() {
     toDoName.current.value = null;
   }
 
+  const toggleToDo = (id) => {
+    const newToDos = [...todos]
+    const todo = newToDos.find(todo => todo.id === id)
+    todo.complete = !todo.complete
+    setTodos(newToDos)
+  }
+
+  const handleClear = (e) => {
+    const newToDos = todos.filter(todo => !todo.complete)
+    setTodos(newToDos);
+  }
+
   return (
     <>
-      <ToDoList todos={todos}/>
       <input ref={toDoName} type="text" />
       <button onClick={handleAdd}>Add</button>
-      <button>Clear</button>
-      <div>0 tasks left</div>
+      <ToDoList todos={todos} toggleToDo={toggleToDo}/>
+      <button onClick={handleClear}>Remove</button>
     </>
   );
 }
